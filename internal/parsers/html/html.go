@@ -24,8 +24,10 @@ func Extract(doc string, query string) ([]string, error) {
 	for _, node := range nodes {
 		children := childrenOf(node)
 		childrenResult := doExtract(children)
-		var filteredChildrenResult []string
 
+		// FIXME discover why `html` mod, what seems like empty nodes
+		// eg: Data: "\n\t\t\t\t"
+		var filteredChildrenResult []string
 		for _, child := range childrenResult {
 			child = strings.Trim(child, " \n\t")
 			if child == "" {
