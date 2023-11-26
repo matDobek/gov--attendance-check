@@ -18,6 +18,7 @@ func TestToElements(t *testing.T) {
 			{tag: "table", id: []string{"Foo"}},
 			{tag: "thead", id: []string{"Fooz"}, class: []string{"Bar", "Baz"}},
 		}},
+		{"div:2", []element{{tag: "div", nthChild: 2}}},
 	}
 
 	for _, test := range tests {
@@ -46,7 +47,6 @@ func TestSearch(t *testing.T) {
 				<tbody>
 					<tr>
 						<td>a1</td>
-						<td>a2</td>
 					</tr>
 					<tr>
 						<td>b1</td>
@@ -65,8 +65,10 @@ func TestSearch(t *testing.T) {
 		{"body#non-existing", []string{}},
 		{"body.non-existing", []string{}},
 		{"body tbody", []string{"tbody"}},
-		{"td", []string{"td", "td", "td", "td"}},
-		{"tr td", []string{"td", "td", "td", "td"}},
+		{"td", []string{"td", "td", "td"}},
+		{"tr td", []string{"td", "td", "td"}},
+		{"tr:2 td", []string{"td", "td"}},
+		{"td:1", []string{"td", "td"}},
 	}
 
 	for _, test := range tests {

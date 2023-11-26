@@ -2,6 +2,7 @@ package html
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/matDobek/gov--attendance-check/internal/predicates"
@@ -9,9 +10,10 @@ import (
 )
 
 type element struct {
-	tag   string
-	class []string
-	id    []string
+	tag      string
+	class    []string
+	id       []string
+	nthChild int
 }
 
 func Extract(doc string, query string) ([]string, error) {
@@ -116,8 +118,9 @@ func toElements(query string) []element {
 		tag := regexp.MustCompile("^[a-zA-Z-_]+").FindString(s)
 		id := regexp.MustCompile("\\#[a-zA-Z0-9-_]+").FindAllString(s, -1)
 		class := regexp.MustCompile("\\.[a-zA-Z0-9-_]+").FindAllString(s, -1)
+		nthChild := regexp.MustCompile("\\:\\d+").FindString(s)
 
-		// remove the leading '#' or '.'
+		// remove the leading '#' or '.' or ':'
 		for i, v := range id {
 			id[i] = v[1:]
 		}
@@ -125,7 +128,16 @@ func toElements(query string) []element {
 			class[i] = v[1:]
 		}
 
-		result = append(result, element{tag: tag, id: id, class: class})
+		nthChildInt := 0
+		if nthChild != "" {
+			nthChild = nthChild[1:]
+			i, err := strconv.Atoi(nthChild)
+			if err == nil {
+				nthChildInt = i
+			}
+		}
+
+		result = append(result, element{tag: tag, id: id, class: class, nthChild: nthChildInt})
 	}
 
 	return result
@@ -172,13 +184,18 @@ func findNodes(node *html.Node, query element) []*html.Node {
 		return []*html.Node{}
 	}
 
+	i := -1
 	for {
-		if isMatching(node, query) {
-			found = append(found, node)
+		if node.Type == html.ElementNode {
+			i++
 		}
 
-		foundFromChildren := findNodes(node.FirstChild, query)
-		found = append(found, foundFromChildren...)
+		if isMatching(node, query, i) {
+			found = append(found, node)
+		} else {
+			foundFromChildren := findNodes(node.FirstChild, query)
+			found = append(found, foundFromChildren...)
+		}
 
 		if node.NextSibling == nil {
 			break
@@ -190,7 +207,7 @@ func findNodes(node *html.Node, query element) []*html.Node {
 	return found
 }
 
-func isMatching(n *html.Node, query element) bool {
+func isMatching(n *html.Node, query element, index int) bool {
 	attrs := make(map[string]string)
 	for _, a := range n.Attr {
 		attrs[a.Key] = a.Val
@@ -226,6 +243,10 @@ func isMatching(n *html.Node, query element) bool {
 			result = false
 			break
 		}
+	}
+
+	if query.nthChild > 0 {
+		result = result && (query.nthChild == index+1)
 	}
 
 	return result
