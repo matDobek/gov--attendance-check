@@ -91,3 +91,99 @@ func TestSearch(t *testing.T) {
 		}
 	}
 }
+
+func TestExtract(t *testing.T) {
+	html := `
+	<!DOCTYPE html>
+	<html>
+		<head></head>
+		<body>
+			<table>
+				<tr>
+					<td>
+						<a>
+							<em>
+								a1
+							</em>
+						</a>
+						<strong>
+							a2
+						</strong>
+					</td>
+				</tr>
+				<tr>
+					<td>b1</td>
+					<td>b2</td>
+				</tr>
+			</table>
+		</body>
+	</html>
+	`
+
+	tests := [][]any{
+		{"tr td", []string{"a1 a2", "b1", "b2"}},
+	}
+
+	for _, test := range tests {
+		arg := test[0].(string)
+		expectedResult := test[1].([]string)
+
+		result, err := Extract(html, arg)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+			continue
+		}
+
+		if len(result) != len(expectedResult) {
+			t.Errorf("args: %v\n %#v\n %#v\n\n", arg, expectedResult, result)
+			continue
+		}
+
+		for i, er := range expectedResult {
+			if result[i] != er {
+				t.Errorf("args: %v\n %#v\n %#v\n\n", arg, er, result[i])
+			}
+		}
+	}
+}
+
+func TestExtractAttr(t *testing.T) {
+	html := `
+	<!DOCTYPE html>
+	<html>
+		<head></head>
+		<body>
+			<a href="foo.co">foo</a>
+			<a href="bar.co">bar</a>
+			<a href="baz.co">baz</a>
+		</body>
+	</html>
+	`
+
+	tests := [][]any{
+		{"a", "href", []string{"foo.co", "bar.co", "baz.co"}},
+	}
+
+	for _, test := range tests {
+		arg0 := test[0].(string)
+		arg1 := test[1].(string)
+		expectedResult := test[2].([]string)
+
+		result, err := ExtractAttr(html, arg0, arg1)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+			continue
+		}
+
+		if len(result) != len(expectedResult) {
+			t.Errorf("args: %v %v\n %#v\n %#v\n\n", arg0, arg1, expectedResult, result)
+			continue
+		}
+
+		for i, er := range expectedResult {
+			if result[i] != er {
+				t.Errorf("args: %v, %v\n %#v\n %#v\n\n", arg0, arg1, er, result[i])
+			}
+		}
+	}
+}

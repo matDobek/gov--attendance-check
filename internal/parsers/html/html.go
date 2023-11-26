@@ -14,6 +14,85 @@ type element struct {
 	id    []string
 }
 
+func Extract(doc string, query string) ([]string, error) {
+	nodes, err := Search(doc, query)
+	if err != nil {
+		return nil, err
+	}
+
+	result := []string{}
+	for _, node := range nodes {
+		children := childrenOf(node)
+		childrenResult := doExtract(children)
+		var filteredChildrenResult []string
+
+		for _, child := range childrenResult {
+			child = strings.Trim(child, " \n\t")
+			if child == "" {
+				continue
+			}
+
+			filteredChildrenResult = append(filteredChildrenResult, child)
+		}
+
+		result = append(result, strings.Join(filteredChildrenResult, " "))
+	}
+
+	return result, nil
+}
+
+func doExtract(nodes []*html.Node) []string {
+	var result []string
+
+	for _, node := range nodes {
+		if node.FirstChild == nil {
+			result = append(result, node.Data)
+			continue
+		}
+
+		children := childrenOf(node)
+		childrenResult := doExtract(children)
+		result = append(result, childrenResult...)
+	}
+
+	return result
+}
+
+func childrenOf(parent *html.Node) []*html.Node {
+	children := []*html.Node{}
+
+	child := parent.FirstChild
+	for {
+		children = append(children, child)
+
+		child = child.NextSibling
+
+		if child == nil {
+			break
+		}
+	}
+
+	return children
+}
+
+func ExtractAttr(doc string, query string, attr string) ([]string, error) {
+	nodes, err := Search(doc, query)
+	if err != nil {
+		return nil, err
+	}
+
+	result := []string{}
+	for _, node := range nodes {
+		for _, a := range node.Attr {
+			if a.Key == attr {
+				result = append(result, a.Val)
+			}
+		}
+	}
+
+	return result, nil
+}
+
 func Search(doc string, query string) ([]*html.Node, error) {
 	reader := strings.NewReader(string(doc))
 	root, err := html.Parse(reader)
@@ -52,6 +131,7 @@ func toElements(query string) []element {
 
 func doSearch(roots []*html.Node, queries []element) []*html.Node {
 	nodes := []*html.Node{}
+
 	for _, root := range roots {
 		found := findNodes(root, queries[0])
 
