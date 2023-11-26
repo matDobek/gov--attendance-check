@@ -29,6 +29,7 @@ func Extract(doc string, query string) ([]string, error) {
 
 		// FIXME discover why `html` mod, what seems like empty nodes
 		// eg: Data: "\n\t\t\t\t"
+		// -> Type: node.Type == html.ElementNode (as for tags)
 		var filteredChildrenResult []string
 		for _, child := range childrenResult {
 			child = strings.Trim(child, " \n\t")
