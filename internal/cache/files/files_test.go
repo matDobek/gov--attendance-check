@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/matDobek/gov--attendance-check/internal/cache"
 	"github.com/matDobek/gov--attendance-check/internal/testing/assert"
 )
 
@@ -51,6 +52,9 @@ func TestPutGet(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, rVal, val)
 	}
+
+	_, err = c.Get("non-existing")
+	assert.Equal(t, err, cache.ErrCouldNotRead)
 
 	err = c.Clear()
 	assert.Error(t, err)
