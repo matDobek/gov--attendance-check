@@ -17,6 +17,8 @@ var levelNames = map[level]string{
 }
 
 func log(t *testing.T, l level, msg string, args ...any) {
+	t.Helper()
+
 	// Clump together all the logs for given test case
 	// Usefull for parallel tests, to switch
 	// from:
@@ -30,6 +32,8 @@ func log(t *testing.T, l level, msg string, args ...any) {
 	//		[info] test_2.1
 	//		[info] test_2.2
 	t.Cleanup(func() {
+		t.Helper()
+
 		t.Logf("["+levelNames[l]+"] "+msg, args...)
 	})
 }
