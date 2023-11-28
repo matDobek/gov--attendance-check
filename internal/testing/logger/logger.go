@@ -2,25 +2,21 @@ package logger
 
 import "testing"
 
-type Level int
+type level int
 
 const (
-	DEBUG Level = iota
-	INFO
-	WARN
-	ERROR
-	FATAL
+	info level = iota
+	err
+	fatal
 )
 
-var levelNames = map[Level]string{
-	DEBUG: "DEBUG",
-	INFO:  "INFO",
-	WARN:  "WARN",
-	ERROR: "ERROR",
-	FATAL: "FATAL",
+var levelNames = map[level]string{
+	info:  "INFO",
+	err:   "ERROR",
+	fatal: "FATAL",
 }
 
-func log(t *testing.T, level Level, msg string, args ...any) {
+func log(t *testing.T, l level, msg string, args ...any) {
 	// Clump together all the logs for given test case
 	// Usefull for parallel tests, to switch
 	// from:
@@ -34,26 +30,26 @@ func log(t *testing.T, level Level, msg string, args ...any) {
 	//		[info] test_2.1
 	//		[info] test_2.2
 	t.Cleanup(func() {
-		t.Logf("["+levelNames[level]+"] "+msg, args...)
+		t.Logf("["+levelNames[l]+"] "+msg, args...)
 	})
 }
 
 func LogInfo(t *testing.T, msg string, args ...any) {
 	t.Helper()
 
-	log(t, INFO, msg, args...)
+	log(t, info, msg, args...)
 }
 
 func LogError(t *testing.T, msg string, args ...any) {
 	t.Helper()
 
-	log(t, ERROR, msg, args...)
+	log(t, err, msg, args...)
 	t.Fail()
 }
 
 func LogFatal(t *testing.T, msg string, args ...any) {
 	t.Helper()
 
-	log(t, FATAL, msg, args...)
+	log(t, fatal, msg, args...)
 	t.FailNow()
 }
