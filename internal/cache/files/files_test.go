@@ -2,89 +2,117 @@ package files
 
 import (
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/matDobek/gov--attendance-check/internal/cache"
 	"github.com/matDobek/gov--attendance-check/internal/testing/assert"
 )
 
-var (
-	defaultTestPath = []string{"tmp", "test", "cache"}
-)
-
 func TestNew(t *testing.T) {
-	c, err := New(defaultTestPath)
-	assert.Error(t, err)
+	t.Run("returns FileCache{...}", func(t *testing.T) {
+		t.Parallel()
 
-	projectRoot, err := lookupMod()
-	assert.Error(t, err)
-	fullPath := strings.Join(append(projectRoot, defaultTestPath...), "/")
-
-	// it creates proper direcotry structure
-	{
-		_, err := os.Stat(fullPath)
+		path := t.TempDir()
+		c, err := ConfigurableNew(path)
 		assert.Error(t, err)
-	}
-
-	// it returns proper result
-	assert.Equal(t, c, FileCache{dir: fullPath})
+		assert.Equal(t, c, FileCache{dir: path})
+	})
 }
 
-func TestPutGet(t *testing.T) {
-	c, err := New(defaultTestPath)
-	assert.Error(t, err)
+func TestGet(t *testing.T) {
+	t.Run("returns value if key do exist", func(t *testing.T) {
+		t.Parallel()
 
-	tests := [][]any{
-		{"a", "1"},
-		{"b", "2"},
-		{"a", "3"}, // allow overwrites
-	}
-
-	for _, test := range tests {
-		key := test[0].(string)
-		val := test[1].(string)
-
-		err = c.Put(key, val)
+		c, err := ConfigurableNew(t.TempDir())
 		assert.Error(t, err)
 
-		rVal, err := c.Get(key)
+		err = c.Put("a", "aaa")
 		assert.Error(t, err)
-		assert.Equal(t, rVal, val)
-	}
 
-	_, err = c.Get("non-existing")
-	assert.Equal(t, err, cache.ErrCouldNotRead)
+		err = c.Put("b", "bbb")
+		assert.Error(t, err)
 
-	err = c.Clear()
-	assert.Error(t, err)
+		got, err := c.Get("a")
+		assert.Error(t, err)
+		assert.Equal(t, got, "aaa")
+	})
+
+	t.Run("returns ErrCouldNotRead if key does not exist", func(t *testing.T) {
+		t.Parallel()
+
+		c, err := ConfigurableNew(t.TempDir())
+		assert.Error(t, err)
+
+		_, err = c.Get("non-existing")
+		assert.Equal(t, err, cache.ErrCouldNotRead)
+	})
+}
+
+func TestPut(t *testing.T) {
+	t.Run("saves value under key", func(t *testing.T) {
+		t.Parallel()
+
+		c, err := ConfigurableNew(t.TempDir())
+		assert.Error(t, err)
+
+		err = c.Put("a", "aaa")
+		assert.Error(t, err)
+
+		err = c.Put("b", "bbb")
+		assert.Error(t, err)
+
+		got, err := c.Get("a")
+		assert.Error(t, err)
+		assert.Equal(t, got, "aaa")
+	})
+
+	t.Run("overwrites value if key already exists", func(t *testing.T) {
+		t.Parallel()
+
+		c, err := ConfigurableNew(t.TempDir())
+		assert.Error(t, err)
+
+		err = c.Put("a", "aaa")
+		assert.Error(t, err)
+
+		err = c.Put("a", "zzz")
+		assert.Error(t, err)
+
+		got, err := c.Get("a")
+		assert.Error(t, err)
+		assert.Equal(t, got, "zzz")
+	})
 }
 
 func TestClear(t *testing.T) {
-	c, err := New(defaultTestPath)
-	assert.Error(t, err)
+	t.Run("overwrites value if key already exists", func(t *testing.T) {
+		t.Parallel()
 
-	tests := [][]any{
-		{"a", "1"},
-		{"b", "2"},
-	}
-
-	for _, test := range tests {
-		key := test[0].(string)
-		val := test[1].(string)
-
-		err := c.Put(key, val)
+		c, err := ConfigurableNew(t.TempDir())
 		assert.Error(t, err)
-	}
 
-	files, err := os.ReadDir(c.dir)
-	assert.Error(t, err)
-	assert.Equal(t, len(files), 2)
+		tests := [][]any{
+			{"a", "1"},
+			{"b", "2"},
+		}
 
-	err = c.Clear()
-	assert.Error(t, err)
+		for _, test := range tests {
+			key := test[0].(string)
+			val := test[1].(string)
 
-	files, err = os.ReadDir(c.dir)
-	assert.Error(t, err)
-	assert.Equal(t, len(files), 0)
+			err := c.Put(key, val)
+			assert.Error(t, err)
+		}
+
+		files, err := os.ReadDir(c.dir)
+		assert.Error(t, err)
+		assert.Equal(t, len(files), 2)
+
+		err = c.Clear()
+		assert.Error(t, err)
+
+		files, err = os.ReadDir(c.dir)
+		assert.Error(t, err)
+		assert.Equal(t, len(files), 0)
+	})
 }

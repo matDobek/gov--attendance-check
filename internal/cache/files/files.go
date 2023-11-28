@@ -46,28 +46,27 @@ var _ cache.Cache = (*FileCache)(nil)
 //
 //
 
-func New(args ...any) (FileCache, error) {
-	var dirs []string
-
-	switch len(args) {
-	case 1:
-		dirs = args[0].([]string)
-	default:
-		dirs = defaultDirectory
-	}
-
-	projectRoot, err := lookupMod()
-	if err != nil {
-		return FileCache{}, err
-	}
-
-	path := strings.Join(append(projectRoot, dirs...), "/")
-	err = os.MkdirAll(path, os.ModePerm)
+func ConfigurableNew(path string) (FileCache, error) {
+	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
 		return FileCache{}, err
 	}
 
 	return FileCache{dir: path}, nil
+}
+
+//
+//
+//
+
+func New() (FileCache, error) {
+	projectRoot, err := lookupMod()
+	if err != nil {
+		return FileCache{}, err
+	}
+
+	path := strings.Join(append(projectRoot, defaultDirectory...), "/")
+	return ConfigurableNew(path)
 }
 
 func lookupMod() ([]string, error) {
@@ -154,18 +153,15 @@ func (fc *FileCache) Clear() error {
 	//   * tmp dir
 	//   * cache dir
 	contains_dir_tmp := false
-	contains_dir_cache := false
 
 	for _, dir := range strings.Split(fc.dir, "/") {
 		switch dir {
 		case "tmp":
 			contains_dir_tmp = true
-		case "cache":
-			contains_dir_cache = true
 		}
 	}
 
-	if contains_dir_tmp && contains_dir_cache {
+	if contains_dir_tmp {
 		files, err := os.ReadDir(fc.dir)
 		if err != nil {
 			return err
