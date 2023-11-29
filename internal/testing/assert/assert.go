@@ -1,6 +1,7 @@
 package assert
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -21,5 +22,14 @@ func Error(t *testing.T, err error) {
 
 	if err != nil {
 		logger.LogError(t, "", err.(any))
+	}
+}
+
+func ErrorIs(t *testing.T, got error, want error) {
+	t.Helper()
+
+	if !errors.Is(got, want) {
+		args := []any{got, want}
+		logger.LogError(t, "got %#v, want %#v", args...)
 	}
 }
