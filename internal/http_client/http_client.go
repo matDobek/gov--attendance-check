@@ -9,6 +9,7 @@ import (
 
 	"github.com/matDobek/gov--attendance-check/internal/cache"
 	"github.com/matDobek/gov--attendance-check/internal/logger"
+	"github.com/matDobek/gov--attendance-check/internal/predicates"
 )
 
 //===================
@@ -35,6 +36,13 @@ type ClientOptions struct {
 //===================
 // Errors
 //===================
+
+var (
+	ErrStatusInfo        = errors.New("received unwated status: info")
+	ErrStatusRedirect    = errors.New("received unwated status: redirect")
+	ErrStatusClientError = errors.New("received unwated status: client error")
+	ErrStatusServerError = errors.New("received unwated status: server error")
+)
 
 type ConnectionError struct {
 	err error
@@ -110,31 +118,36 @@ func (c *HttpClient) CachedGet(url string) ([]byte, error) {
 func (c *HttpClient) Get(url string) (respBody []byte, err error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return failure[[]byte](err)
+		return nil, ConnectionError{err}
 	}
 
 	// naive prevention for rejecting bot requests
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0")
 
+	logger.Info("GET: %s", url)
+
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return failure[[]byte](err)
+		return nil, ConnectionError{err}
 	}
 	defer resp.Body.Close()
 
-	response, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return failure[[]byte](err)
+	if predicates.Between(resp.StatusCode, 100, 199) {
+		return []byte{}, ErrStatusInfo
+	} else if predicates.Between(resp.StatusCode, 200, 299) {
+		// much success
+	} else if predicates.Between(resp.StatusCode, 300, 399) {
+		return []byte{}, ErrStatusRedirect
+	} else if predicates.Between(resp.StatusCode, 400, 499) {
+		return []byte{}, ErrStatusClientError
+	} else {
+		return []byte{}, ErrStatusServerError
 	}
 
-	return success(response)
-}
+	response, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
-func failure[V any](err error) (V, error) {
-	var val V
-	return val, ConnectionError{err}
-}
-
-func success[V any](val V) (V, error) {
-	return val, nil
+	return response, nil
 }
