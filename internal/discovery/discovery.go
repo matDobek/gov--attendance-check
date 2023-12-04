@@ -6,23 +6,10 @@ import (
 
 	"github.com/matDobek/gov--attendance-check/internal/cache"
 	"github.com/matDobek/gov--attendance-check/internal/cache/factory"
+	"github.com/matDobek/gov--attendance-check/internal/db"
 	httpclient "github.com/matDobek/gov--attendance-check/internal/http_client"
 	"github.com/matDobek/gov--attendance-check/internal/parsers/html"
 )
-
-type Statue struct {
-	VotingNo  int
-	TermNo    int
-	SessionNo int
-	Title     string
-	Votes     []Vote
-}
-
-type Vote struct {
-	Name     string
-	Party    string
-	Response string
-}
 
 type StatueToParse struct {
 	q   StatueQuery
@@ -73,9 +60,8 @@ func initRequest() func(string) (string, error) {
 	}
 }
 
-
-func Run() ([]Statue, error) {
-	result := []Statue{}
+func Run() ([]db.Statue, error) {
+	result := []db.Statue{}
 
 	statuesToParse, err := getStatuesToParse()
 	if err != nil {
@@ -117,10 +103,10 @@ func Run() ([]Statue, error) {
 		})
 
 		if err != nil {
-			return []Statue{}, err
+			return []db.Statue{}, err
 		}
 
-		votes := []Vote{}
+		votes := []db.Vote{}
 		for _, club := range clubs {
 			clubName := club[0]
 			url := "https://www.sejm.gov.pl/Sejm10.nsf/" + club[1]
@@ -146,7 +132,7 @@ func Run() ([]Statue, error) {
 				return result, err
 			}
 
-			v := Vote{Party: clubName}
+			v := db.Vote{Party: clubName}
 			for i, vr := range votingResults {
 				switch i % 3 {
 				case 0:
@@ -159,7 +145,7 @@ func Run() ([]Statue, error) {
 			}
 		}
 
-		ving := Statue{
+		ving := db.Statue{
 			Title:     title,
 			VotingNo:  statueToParse.q.votingNo,
 			SessionNo: statueToParse.q.sessionNo,
