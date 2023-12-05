@@ -24,14 +24,26 @@ func NewGovServer(store *db.GovStore) *GovServer {
 	}
 
 	s.router.Handle("/statues/", http.HandlerFunc(s.handleStatues))
+	s.router.Handle("/politicians/", http.HandlerFunc(s.handlePoliticians))
+	s.router.Handle("/votes/", http.HandlerFunc(s.handleVotes))
 
 	return s
 }
 
 func (s *GovServer) handleStatues(w http.ResponseWriter, r *http.Request) {
-	statues := s.store.GetStatues()
+	json.NewEncoder(w).Encode(s.store.GetStatues())
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
 
-	json.NewEncoder(w).Encode(statues)
+func (s *GovServer) handleVotes(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(s.store.GetVotes())
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (s *GovServer) handlePoliticians(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(s.store.GetPoliticians())
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
