@@ -1,0 +1,7 @@
+{
+	"/": [],
+	"/about": [],
+	"/votes": [
+		"src/routes/votes/+page.ts"
+	]
+}
