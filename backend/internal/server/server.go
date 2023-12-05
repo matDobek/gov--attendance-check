@@ -23,27 +23,27 @@ func NewGovServer(store *db.GovStore) *GovServer {
 		router: http.NewServeMux(),
 	}
 
-	s.router.Handle("/statues/", http.HandlerFunc(s.handleStatues))
-	s.router.Handle("/politicians/", http.HandlerFunc(s.handlePoliticians))
-	s.router.Handle("/votes/", http.HandlerFunc(s.handleVotes))
+	s.router.Handle("/api/v1/statues/", http.HandlerFunc(s.handleStatues))
+	s.router.Handle("/api/v1/politicians/", http.HandlerFunc(s.handlePoliticians))
+	s.router.Handle("/api/v1/votes/", http.HandlerFunc(s.handleVotes))
 
 	return s
 }
 
 func (s *GovServer) handleStatues(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(s.store.GetStatues())
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(s.store.GetStatues())
 }
 
 func (s *GovServer) handleVotes(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(s.store.GetVotes())
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(s.store.GetVotes())
 }
 
 func (s *GovServer) handlePoliticians(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(s.store.GetPoliticians())
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(s.store.GetPoliticians())
 }

@@ -19,10 +19,10 @@ func TestGetStatues(t *testing.T) {
 	store := db.NewGovStore(statues, politicians, votes)
 	server := NewGovServer(store)
 
-	t.Run("GET /statues/", func(t *testing.T) {
+	t.Run("GET api/v1/statues/", func(t *testing.T) {
 		t.Parallel()
 
-		request, _ := http.NewRequest(http.MethodGet, "/statues/", nil)
+		request, _ := http.NewRequest(http.MethodGet, "/api/v1/statues/", nil)
 		response := httptest.NewRecorder()
 
 		server.router.ServeHTTP(response, request)
@@ -50,10 +50,10 @@ func TestGetPoliticians(t *testing.T) {
 	store := db.NewGovStore(statues, politicians, votes)
 	server := NewGovServer(store)
 
-	t.Run("GET /politicians/", func(t *testing.T) {
+	t.Run("GET api/v1/politicians/", func(t *testing.T) {
 		t.Parallel()
 
-		request, _ := http.NewRequest(http.MethodGet, "/politicians/", nil)
+		request, _ := http.NewRequest(http.MethodGet, "/api/v1/politicians/", nil)
 		response := httptest.NewRecorder()
 
 		server.router.ServeHTTP(response, request)
@@ -81,10 +81,10 @@ func TestGetVotes(t *testing.T) {
 	store := db.NewGovStore(statues, politicians, votes)
 	server := NewGovServer(store)
 
-	t.Run("GET /statues/", func(t *testing.T) {
+	t.Run("GET api/v1/statues/", func(t *testing.T) {
 		t.Parallel()
 
-		request, _ := http.NewRequest(http.MethodGet, "/votes/", nil)
+		request, _ := http.NewRequest(http.MethodGet, "/api/v1/votes/", nil)
 		response := httptest.NewRecorder()
 
 		server.router.ServeHTTP(response, request)
