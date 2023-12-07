@@ -7,20 +7,20 @@ import (
 )
 
 func main() {
-	// statues, err := discovery.Run()
+	// dStatues, err := discovery.Run()
 	// if err != nil {
 	// 	fmt.Println(err)
 	// }
 	dStatues := []discovery.Statue{
-		{1, 1, 1, "1st voting", []discovery.Vote{
-			{"Jan Kowalski", "KO", db.VoteResponseYes},
-			{"Adam Nowak", "PiS", db.VoteResponseNo},
-			{"Marek Zbirek", "Trzecia Droga", db.VoteResponseMaybe},
+		{VotingNo: 1, SessionNo: 1, TermNo: 1, Title: "1st voting", Votes: []discovery.Vote{
+			{Name: "Jan Kowalski", Party: "KO", Response: db.VoteResponseYes},
+			{Name: "Adam Nowak", Party: "PiS", Response: db.VoteResponseNo},
+			{Name: "Marek Zbirek", Party: "Trzecia Droga", Response: db.VoteResponseMaybe},
 		}},
-		{1, 1, 1, "1st voting", []discovery.Vote{
-			{"Jan Kowalski", "KO", db.VoteResponseYes},
-			{"Adam Nowak", "PiS", db.VoteResponseNo},
-			{"Marek Zbirek", "Trzecia Droga", db.VoteResponseMaybe},
+		{VotingNo: 1, SessionNo: 1, TermNo: 1, Title: "1st voting", Votes: []discovery.Vote{
+			{Name: "Jan Kowalski", Party: "KO", Response: db.VoteResponseYes},
+			{Name: "Adam Nowak", Party: "PiS", Response: db.VoteResponseNo},
+			{Name: "Marek Zbirek", Party: "Trzecia Droga", Response: db.VoteResponseMaybe},
 		}},
 	}
 	statues, votes, politicians := discovery.MapToDBFormat(dStatues)

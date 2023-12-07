@@ -12,7 +12,7 @@ import (
 
 func TestGetStatues(t *testing.T) {
 	statues := []db.Statue{
-		{1, 1, 1, 1, "1st voting"},
+		{ID: 1, VotingNo: 1, SessionNo: 1, TermNo: 1, Title: "1st voting"},
 	}
 	politicians := []db.Politician{}
 	votes := []db.Vote{}
@@ -32,7 +32,7 @@ func TestGetStatues(t *testing.T) {
 		assert.Error(t, err)
 
 		want := []db.Statue{
-			{1, 1, 1, 1, "1st voting"},
+			{ID: 1, VotingNo: 1, SessionNo: 1, TermNo: 1, Title: "1st voting"},
 		}
 
 		assert.Equal(t, response.Header().Get("Content-Type"), "application/json")
@@ -44,7 +44,7 @@ func TestGetStatues(t *testing.T) {
 func TestGetPoliticians(t *testing.T) {
 	statues := []db.Statue{}
 	politicians := []db.Politician{
-		{1, "Jan Kowalski", "PiS"},
+		{ID: 1, Name: "Jan Kowalski", Party: "PiS"},
 	}
 	votes := []db.Vote{}
 	store := db.NewGovStore(statues, politicians, votes)
@@ -63,7 +63,7 @@ func TestGetPoliticians(t *testing.T) {
 		assert.Error(t, err)
 
 		want := []db.Politician{
-			{1, "Jan Kowalski", "PiS"},
+			{ID: 1, Name: "Jan Kowalski", Party: "PiS"},
 		}
 
 		assert.Equal(t, response.Header().Get("Content-Type"), "application/json")
@@ -76,7 +76,7 @@ func TestGetVotes(t *testing.T) {
 	statues := []db.Statue{}
 	politicians := []db.Politician{}
 	votes := []db.Vote{
-		{1, 1, 1, db.VoteResponseNo},
+		{ID: 1, PoliticianId: 1, StatueId: 1, Response: db.VoteResponseNo},
 	}
 	store := db.NewGovStore(statues, politicians, votes)
 	server := NewGovServer(store)
@@ -94,7 +94,7 @@ func TestGetVotes(t *testing.T) {
 		assert.Error(t, err)
 
 		want := []db.Vote{
-			{1, 1, 1, db.VoteResponseNo},
+			{ID: 1, PoliticianId: 1, StatueId: 1, Response: db.VoteResponseNo},
 		}
 
 		assert.Equal(t, response.Header().Get("Content-Type"), "application/json")

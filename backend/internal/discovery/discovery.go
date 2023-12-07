@@ -95,6 +95,9 @@ func Run() ([]Statue, error) {
 		titles, err := extractAndZip(statueToParse.str, [][]string{
 			{"body #title_content p.subbig"}, // title
 		})
+    if err != nil {
+      return nil, err
+    }
 		var title string
 		for _, i := range titles {
 			for _, j := range i {
@@ -297,7 +300,7 @@ func min(xs ...int) int {
 
 	for _, x := range xs {
 		if x < m {
-			x = m
+      m = x
 		}
 	}
 

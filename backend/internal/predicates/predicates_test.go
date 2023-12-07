@@ -7,7 +7,7 @@ import (
 )
 
 func TestPresent(t *testing.T) {
-	t.Run("", func(t *testing.T) {
+	t.Run("returns true when value is not empty", func(t *testing.T) {
 		t.Parallel()
 
 		tests := [][]any{

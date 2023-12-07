@@ -14,22 +14,22 @@ type GovStore struct {
 }
 
 type Statue struct {
-	Id        int    `json:"id"`
+	ID        int    `json:"id"`
 	VotingNo  int    `json:"votingNumber"`
 	SessionNo int    `json:"sessionNumber"`
-	TermNo    int    `json:"termNumber""`
+	TermNo    int    `json:"termNumber"`
 	Title     string `json:"title"`
 }
 
 type Vote struct {
-	Id           int    `json:"id"`
+	ID           int    `json:"id"`
 	PoliticianId int    `json:"politicianId"`
 	StatueId     int    `json:"statueId"`
 	Response     string `json:"response"`
 }
 
 type Politician struct {
-	Id    int    `json:"id"`
+	ID    int    `json:"id"`
 	Name  string `json:"name"`
 	Party string `json:"party"`
 }

@@ -33,17 +33,29 @@ func NewGovServer(store *db.GovStore) *GovServer {
 func (s *GovServer) handleStatues(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(s.store.GetStatues())
+
+  err := json.NewEncoder(w).Encode(s.store.GetStatues())
+  if err != nil {
+    logger.Fatal(err)
+  }
 }
 
 func (s *GovServer) handleVotes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(s.store.GetVotes())
+
+  err := json.NewEncoder(w).Encode(s.store.GetVotes())
+  if err != nil {
+    logger.Fatal(err)
+  }
 }
 
 func (s *GovServer) handlePoliticians(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(s.store.GetPoliticians())
+
+  err := json.NewEncoder(w).Encode(s.store.GetPoliticians())
+  if err != nil {
+    logger.Fatal(err)
+  }
 }

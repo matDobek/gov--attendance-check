@@ -16,8 +16,8 @@ var (
 		{12, "Adam Nowak", "KO"},
 	}
 	votes = []Vote{
-		{Id: 111, StatueId: 1, PoliticianId: 11, Response: VoteResponseYes},
-		{Id: 112, StatueId: 1, PoliticianId: 12, Response: VoteResponseNo},
+		{ID: 111, StatueId: 1, PoliticianId: 11, Response: VoteResponseYes},
+		{ID: 112, StatueId: 1, PoliticianId: 12, Response: VoteResponseNo},
 	}
 )
 

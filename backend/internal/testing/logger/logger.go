@@ -29,8 +29,9 @@ func log(t *testing.T, l level, msg string, args ...any) {
 	// to:
 	//		[info] test_1
 	//		[info] test_3
-	//		[info] test_2.1
+	//		[info] test_2.3
 	//		[info] test_2.2
+	//		[info] test_2.1
 	t.Cleanup(func() {
 		t.Helper()
 

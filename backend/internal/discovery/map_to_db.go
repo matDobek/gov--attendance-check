@@ -16,7 +16,7 @@ func MapToDBFormat(input []Statue) ([]db.Statue, []db.Vote, []db.Politician) {
 	for _, statue := range input {
 		sId := generateID()
 		statues = append(statues, db.Statue{
-			Id:        sId,
+			ID:        sId,
 			VotingNo:  statue.VotingNo,
 			SessionNo: statue.SessionNo,
 			TermNo:    statue.TermNo,
@@ -24,18 +24,18 @@ func MapToDBFormat(input []Statue) ([]db.Statue, []db.Vote, []db.Politician) {
 		})
 
 		for _, vote := range statue.Votes {
-			pID := -1
+      var pID int
 			pol, ok := mapOfPoliticians[vote.Name]
 
 			if ok {
-				pID = pol.Id
+				pID = pol.ID
 			} else {
 				pID = generateID()
-				mapOfPoliticians[vote.Name] = db.Politician{Id: pID, Name: vote.Name, Party: vote.Party}
+				mapOfPoliticians[vote.Name] = db.Politician{ID: pID, Name: vote.Name, Party: vote.Party}
 			}
 
 			votes = append(votes, db.Vote{
-				Id:           generateID(),
+				ID:           generateID(),
 				PoliticianId: pID,
 				StatueId:     sId,
 				Response:     vote.Response,

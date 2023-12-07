@@ -116,10 +116,10 @@ func toElements(query string) []element {
 
 	query = strings.Trim(query, " \n\t")
 	for _, s := range strings.Split(query, " ") {
-		tag := regexp.MustCompile("^[a-zA-Z-_]+").FindString(s)
-		id := regexp.MustCompile("\\#[a-zA-Z0-9-_]+").FindAllString(s, -1)
-		class := regexp.MustCompile("\\.[a-zA-Z0-9-_]+").FindAllString(s, -1)
-		nthChild := regexp.MustCompile("\\:\\d+").FindString(s)
+		tag := regexp.MustCompile(`^[a-zA-Z-_]+`).FindString(s)
+		id := regexp.MustCompile(`\#[a-zA-Z0-9-_]+`).FindAllString(s, -1)
+		class := regexp.MustCompile(`\.[a-zA-Z0-9-_]+`).FindAllString(s, -1)
+		nthChild := regexp.MustCompile(`\:\d+`).FindString(s)
 
 		// remove the leading '#' or '.' or ':'
 		for i, v := range id {

@@ -14,7 +14,8 @@ func TestGet(t *testing.T) {
 		t.Parallel()
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("foo"))
+      _, err := w.Write([]byte("foo"))
+      assert.Error(t, err)
 		}
 
 		server := httptest.NewServer(http.HandlerFunc(handler))
@@ -51,7 +52,8 @@ func TestCachedGet(t *testing.T) {
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			i++
 
-			w.Write([]byte("foo"))
+      _, err := w.Write([]byte("foo"))
+      assert.Error(t, err)
 		}
 
 		server := httptest.NewServer(http.HandlerFunc(handler))
