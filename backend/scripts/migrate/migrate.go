@@ -18,10 +18,10 @@ import (
 )
 
 const (
-	NewCmd   = "new"
-	UpCmd    = "up"
-	DownCmd  = "down"
-	ForceCmd = "force"
+	NewCmd   = "new"   // new create_user_table
+	UpCmd    = "up"    // up
+	DownCmd  = "down"  // down
+	ForceCmd = "force" // force
 )
 
 const MigrationDir = "db/migrations/"
