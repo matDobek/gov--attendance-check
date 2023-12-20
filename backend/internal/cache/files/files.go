@@ -2,13 +2,12 @@ package files
 
 import (
 	"crypto/sha1"
-	"errors"
 	"fmt"
 	"os"
-	"runtime"
 	"strings"
 
 	"github.com/matDobek/gov--attendance-check/internal/cache"
+	"github.com/matDobek/gov--attendance-check/internal/utils"
 )
 
 //===================
@@ -17,14 +16,6 @@ import (
 
 var (
 	defaultDirectory = []string{"tmp", "cache"}
-)
-
-//===================
-// Errors
-//===================
-
-var (
-	ErrRootNotFound = errors.New("Project root not found")
 )
 
 //===================
@@ -60,45 +51,13 @@ func ConfigurableNew(path string) (FileCache, error) {
 //
 
 func New() (FileCache, error) {
-	projectRoot, err := lookupMod()
+	projectRoot, err := utils.LookupMod()
 	if err != nil {
 		return FileCache{}, err
 	}
 
 	path := strings.Join(append(projectRoot, defaultDirectory...), "/")
 	return ConfigurableNew(path)
-}
-
-func lookupMod() ([]string, error) {
-	_, file, _, _ := runtime.Caller(0)
-
-	dirs, err := lookup(strings.Split(file, "/"), "go.mod")
-	if err != nil {
-		return []string{}, err
-	}
-	return dirs, nil
-}
-
-func lookup(dirs []string, name string) ([]string, error) {
-	if len(dirs) == 0 {
-		return dirs, ErrRootNotFound
-	}
-
-	path := strings.Join(dirs, "/")
-	children, err := os.ReadDir(path)
-	if err != nil {
-		children = []os.DirEntry{}
-	}
-
-	for _, file := range children {
-		if file.IsDir() || file.Name() != name {
-			continue
-		}
-
-		return dirs, nil
-	}
-
-	return lookup(dirs[:len(dirs)-1], name)
 }
 
 //===================
