@@ -1,3 +1,5 @@
+begin;
+
 create table politicians (
   id integer GENERATED ALWAYS AS IDENTITY (START WITH 1000) PRIMARY KEY,
   name varchar(255),
@@ -18,3 +20,5 @@ create table votes (
   statue_id     integer not null references statues(id)     on delete cascade,
   response varchar(255)
 );
+
+commit;
