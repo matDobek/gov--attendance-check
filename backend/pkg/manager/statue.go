@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/matDobek/gov--attendance-check/internal/types"
 )
 
 //=======================================================
@@ -11,18 +13,88 @@ import (
 //=======================================================
 
 type Statue struct {
-	ID            int    `json:"id"`
-	VotingNumber  int    `json:"votingNumber"`
-	SessionNumber int    `json:"sessionNumber"`
-	TermNumber    int    `json:"termNumber"`
-	Title         string `json:"title"`
-}
-
-type StatueParams struct {
+	ID            int
 	VotingNumber  int
 	SessionNumber int
 	TermNumber    int
 	Title         string
+}
+
+type StatueParams struct {
+	VotingNumber  types.Maybe[int]
+	SessionNumber types.Maybe[int]
+	TermNumber    types.Maybe[int]
+	Title         types.Maybe[string]
+}
+
+func NewStatueParams() *StatueParams {
+  return &StatueParams{}
+}
+
+func (s *StatueParams) WithVotingNumber(v int) *StatueParams {
+  s.VotingNumber = types.Some(v)
+  return s
+}
+
+func (s *StatueParams) WithSessionNumber(v int) *StatueParams {
+  s.SessionNumber = types.Some(v)
+  return s
+}
+
+func (s *StatueParams) WithTermNumber(v int) *StatueParams {
+  s.TermNumber = types.Some(v)
+  return s
+}
+
+func (s *StatueParams) WithTitle(v string) *StatueParams {
+  s.Title = types.Some(v)
+  return s
+}
+
+func (s *StatueParams) IsValid() (bool, error) {
+	var err StatueErrors
+
+
+  v, b := s.VotingNumber.Unwrap()
+  if !b {
+		err.VotingNumber = append(err.VotingNumber, ErrValueRequired)
+  }
+  if v <= 0 {
+		err.VotingNumber = append(err.VotingNumber, ErrPositiveValue)
+	}
+
+  v, b = s.SessionNumber.Unwrap()
+  if !b {
+		err.SessionNumber = append(err.VotingNumber, ErrValueRequired)
+  }
+  if v <= 0 {
+		err.SessionNumber = append(err.SessionNumber, ErrPositiveValue)
+	}
+
+  v, b = s.TermNumber.Unwrap()
+  if !b {
+		err.TermNumber = append(err.VotingNumber, ErrValueRequired)
+  }
+  if v <= 0 {
+		err.TermNumber = append(err.SessionNumber, ErrPositiveValue)
+	}
+
+  str, b := s.Title.Unwrap()
+  if !b {
+		err.Title = append(err.VotingNumber, ErrValueRequired)
+  }
+  if strings.Trim(str, " \t\n") == "" {
+		err.Title = append(err.Title, ErrNonZeroValue)
+	}
+
+	if len(err.Title) > 0 ||
+		len(err.VotingNumber) > 0 ||
+		len(err.SessionNumber) > 0 ||
+		len(err.TermNumber) > 0 {
+		return false, err
+	}
+
+	return true, nil
 }
 
 //=======================================================
@@ -30,7 +102,8 @@ type StatueParams struct {
 //=======================================================
 
 var (
-	ErrNonZeroValue  = errors.New("expected non zero value")
+	ErrValueRequired  = errors.New("value is required")
+	ErrNonZeroValue  = errors.New("expected non empty value")
 	ErrPositiveValue = errors.New("expected positive value")
 	ErrNegativeValue = errors.New("expected negative zero value")
 )
@@ -96,59 +169,17 @@ func (e StatueErrors) Is(target error) bool {
 //
 //
 
-func ValidateStatue(s StatueParams) (bool, error) {
-	var err StatueErrors
-
-	if s.VotingNumber <= 0 {
-		err.VotingNumber = append(err.VotingNumber, ErrNonZeroValue)
-		err.VotingNumber = append(err.VotingNumber, ErrPositiveValue)
-	}
-
-	if s.SessionNumber <= 0 {
-		err.SessionNumber = append(err.SessionNumber, ErrNonZeroValue)
-		err.SessionNumber = append(err.SessionNumber, ErrPositiveValue)
-	}
-
-	if s.TermNumber <= 0 {
-		err.TermNumber = append(err.TermNumber, ErrNonZeroValue)
-		err.TermNumber = append(err.TermNumber, ErrPositiveValue)
-	}
-
-	if strings.Trim(s.Title, " \t\n") == "" {
-		err.Title = append(err.Title, ErrNonZeroValue)
-	}
-
-	if len(err.Title) > 0 ||
-		len(err.VotingNumber) > 0 ||
-		len(err.SessionNumber) > 0 ||
-		len(err.TermNumber) > 0 {
-		return false, err
-	}
-
-	return true, nil
-}
-
-//
-//
-//
-
 type CreateStatueStore interface {
-	Insert(Statue) (Statue, error)
+	Insert(StatueParams) (Statue, error)
 }
 
 func CreateStatue(store CreateStatueStore, params StatueParams) (Statue, error) {
-	statue := buildStatue(params)
+  ok, err := params.IsValid()
+  if !ok {
+    return Statue{}, err
+  }
 
-	return store.Insert(statue)
-}
-
-func buildStatue(p StatueParams) Statue {
-	return Statue{
-		VotingNumber:  p.VotingNumber,
-		SessionNumber: p.SessionNumber,
-		TermNumber:    p.TermNumber,
-		Title:         p.Title,
-	}
+  return store.Insert(params)
 }
 
 //
