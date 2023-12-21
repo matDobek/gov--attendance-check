@@ -26,6 +26,10 @@ var (
 	_ manager.AllStatuesStore   = (*SQLStatueStore)(nil)
 )
 
+//
+//
+//
+
 func (s *SQLStatueStore) All() ([]manager.Statue, error) {
 	var result []manager.Statue
 
@@ -65,11 +69,16 @@ func (s *SQLStatueStore) All() ([]manager.Statue, error) {
 	return result, nil
 }
 
-func (s *SQLStatueStore) Insert(statue manager.Statue) (manager.Statue, error) {
+//
+//
+//
+
+func (s *SQLStatueStore) Insert(params manager.StatueParams) (manager.Statue, error) {
+  statue := manager.Statue{}
 	q := `
-    insert into statues (term_number, session_number, voting_number, title)
+    insert into statues (title, term_number, session_number, voting_number)
       values ($1, $2, $3, $4)
-      returning id
+      returning id, title, term_number, session_number, voting_number
   `
 
 	stmt, err := s.s.PrimaryDB.Prepare(q)
@@ -79,10 +88,15 @@ func (s *SQLStatueStore) Insert(statue manager.Statue) (manager.Statue, error) {
 	defer stmt.Close()
 
 	err = stmt.QueryRow(
-		statue.TermNumber,
-		statue.SessionNumber,
-		statue.VotingNumber,
-		statue.Title).Scan(&statue.ID)
+		params.Title,
+		params.TermNumber,
+		params.SessionNumber,
+		params.VotingNumber).Scan(
+      &statue.ID,
+			&statue.Title,
+			&statue.TermNumber,
+			&statue.SessionNumber,
+			&statue.VotingNumber)
 	if err != nil {
 		return manager.Statue{}, err
 	}
