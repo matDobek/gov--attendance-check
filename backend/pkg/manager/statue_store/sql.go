@@ -1,7 +1,8 @@
 package statue_store
 
 import (
-	"github.com/matDobek/gov--attendance-check/internal/storage"
+	"database/sql"
+
 	"github.com/matDobek/gov--attendance-check/pkg/manager"
 )
 
@@ -9,8 +10,8 @@ import (
 // New
 //----------------------------------
 
-func NewSQLStore(s *storage.Storage) *SQLStore {
-	return &SQLStore{s: s}
+func NewSQLStore(db *sql.DB) *SQLStore {
+	return &SQLStore{db: db}
 }
 
 //----------------------------------
@@ -18,7 +19,7 @@ func NewSQLStore(s *storage.Storage) *SQLStore {
 //----------------------------------
 
 type SQLStore struct {
-	s *storage.Storage
+	db *sql.DB
 }
 
 var (
@@ -45,7 +46,7 @@ func (s *SQLStore) All() ([]manager.Statue, error) {
     from statues
 	`
 
-	stmt, err := s.s.PrimaryDB.Prepare(q)
+	stmt, err := s.db.Prepare(q)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +104,7 @@ func (s *SQLStore) Insert(params manager.StatueParams) (manager.Statue, error) {
         created_at
   `
 
-	stmt, err := s.s.PrimaryDB.Prepare(q)
+	stmt, err := s.db.Prepare(q)
 	if err != nil {
 		return manager.Statue{}, err
 	}
