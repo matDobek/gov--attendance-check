@@ -35,46 +35,46 @@ func TestInsert(t *testing.T) {
   })
 }
 
-// func TestAll(t *testing.T) {
-//   statueStore := NewSQLStatueStore(storage.NewStorage(dbURL))
-//
-//   t.Run("returns empty slice when no rows", func(t *testing.T) {
-//     cleanUp(t)
-//     result, err := statueStore.All()
-//
-//     assert.Error(t, err)
-//     assert.Equal(t, len(result), 0)
-//   })
-//
-//   t.Run("returns all existing rows", func(t *testing.T) {
-//     cleanUp(t)
-//
-//     params1 := manager.NewStatueParams().
-//       WithTermNumber(1).
-//       WithSessionNumber(1).
-//       WithVotingNumber(1).
-//       WithTitle("foo")
-//
-//     params2 := manager.NewStatueParams().
-//       WithTermNumber(1).
-//       WithSessionNumber(1).
-//       WithVotingNumber(2).
-//       WithTitle("bar")
-//
-//     _, err := statueStore.Insert(*params1)
-//     assert.Error(t, err)
-//
-//     _, err = statueStore.Insert(*params2)
-//     assert.Error(t, err)
-//
-//     result, err := statueStore.All()
-//
-//     assert.Error(t, err)
-//     assert.Equal(t, len(result), 2)
-//     assert.Equal(t, result[0].Title, "foo")
-//     assert.Equal(t, result[1].Title, "bar")
-//   })
-// }
+func TestAll(t *testing.T) {
+  statueStore := NewSQLStatueStore(storage.NewStorage(dbURL))
+
+  t.Run("returns empty slice when no rows", func(t *testing.T) {
+    cleanUp(t)
+    result, err := statueStore.All()
+
+    assert.Error(t, err)
+    assert.Equal(t, len(result), 0)
+  })
+
+  t.Run("returns all existing rows", func(t *testing.T) {
+    cleanUp(t)
+
+    params1 := manager.NewStatueParams().
+      WithTermNumber(1).
+      WithSessionNumber(1).
+      WithVotingNumber(1).
+      WithTitle("foo")
+
+    params2 := manager.NewStatueParams().
+      WithTermNumber(1).
+      WithSessionNumber(1).
+      WithVotingNumber(2).
+      WithTitle("bar")
+
+    _, err := statueStore.Insert(*params1)
+    assert.Error(t, err)
+
+    _, err = statueStore.Insert(*params2)
+    assert.Error(t, err)
+
+    result, err := statueStore.All()
+
+    assert.Error(t, err)
+    assert.Equal(t, len(result), 2)
+    assert.Equal(t, result[0].Title, "foo")
+    assert.Equal(t, result[1].Title, "bar")
+  })
+}
 
 func cleanUp(t *testing.T) {
   t.Helper()
