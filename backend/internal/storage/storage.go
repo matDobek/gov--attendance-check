@@ -7,10 +7,6 @@ import (
 
 type Storage struct {
 	PrimaryDB *sql.DB
-	// add future adapters here
-	// memory
-	// redis
-	// ...
 }
 
 func NewStorage(databaseURL string) *Storage {
