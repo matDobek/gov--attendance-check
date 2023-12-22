@@ -20,7 +20,7 @@ func NewMemStore() *MemStore {
 }
 
 //----------------------------------
-// StatueStore
+// Store
 //----------------------------------
 
 type MemStore struct {
@@ -28,8 +28,7 @@ type MemStore struct {
 }
 
 var (
-	_ manager.CreateStatueStore = (*MemStore)(nil)
-	_ manager.AllStatuesStore   = (*MemStore)(nil)
+	_ manager.StatueStore = (*MemStore)(nil)
 )
 
 //

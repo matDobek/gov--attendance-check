@@ -15,7 +15,7 @@ func NewSQLStore(db *sql.DB) *SQLStore {
 }
 
 //----------------------------------
-// PoliticianStore
+// Store
 //----------------------------------
 
 type SQLStore struct {
@@ -23,8 +23,7 @@ type SQLStore struct {
 }
 
 var (
-	_ manager.CreatePoliticianStore = (*SQLStore)(nil)
-	_ manager.AllPoliticiansStore   = (*SQLStore)(nil)
+	_ manager.PoliticianStore = (*SQLStore)(nil)
 )
 
 //

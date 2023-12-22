@@ -12,6 +12,11 @@ import (
 // Types
 //=======================================================
 
+type StatueStore interface {
+	Insert(StatueParams) (Statue, error)
+	All() ([]Statue, error)
+}
+
 type Statue struct {
 	ID            int
   UpdatedAt     time.Time
@@ -164,11 +169,7 @@ func (e StatueErrors) Is(target error) bool {
 //
 //
 
-type CreateStatueStore interface {
-	Insert(StatueParams) (Statue, error)
-}
-
-func CreateStatue(store CreateStatueStore, params StatueParams) (Statue, error) {
+func CreateStatue(store StatueStore, params StatueParams) (Statue, error) {
   ok, err := params.IsValid()
   if !ok {
     return Statue{}, err
@@ -181,10 +182,6 @@ func CreateStatue(store CreateStatueStore, params StatueParams) (Statue, error) 
 //
 //
 
-type AllStatuesStore interface {
-	All() ([]Statue, error)
-}
-
-func AllStatues(store AllStatuesStore) ([]Statue, error) {
+func AllStatues(store StatueStore) ([]Statue, error) {
 	return store.All()
 }
