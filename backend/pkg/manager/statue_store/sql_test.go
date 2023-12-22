@@ -2,9 +2,11 @@ package statue_store
 
 import (
 	"testing"
+	"time"
 
 	"github.com/matDobek/gov--attendance-check/internal/storage"
 	"github.com/matDobek/gov--attendance-check/internal/testing/assert"
+	"github.com/matDobek/gov--attendance-check/internal/testing/logger"
 	"github.com/matDobek/gov--attendance-check/internal/utils"
 	"github.com/matDobek/gov--attendance-check/pkg/manager"
 )
@@ -25,13 +27,23 @@ func TestInsert(t *testing.T) {
       WithVotingNumber(3).
       WithTitle("foo")
 
+    time_before := time.Now()
     result, err := statueStore.Insert(*params)
+    time_after := time.Now()
 
     assert.Error(t, err)
     assert.Equal(t, result.TermNumber, 1)
     assert.Equal(t, result.SessionNumber, 2)
     assert.Equal(t, result.VotingNumber, 3)
     assert.Equal(t, result.Title, "foo")
+
+    if !time_before.Before(result.CreatedAt) || !time_after.After(result.CreatedAt) {
+      logger.LogError(t, "created_at is not valid: %v", result.CreatedAt)
+    }
+
+    if !time_before.Before(result.UpdatedAt) || !time_after.After(result.UpdatedAt) {
+      logger.LogError(t, "updated_at is not valid: %v", result.UpdatedAt)
+    }
   })
 }
 
