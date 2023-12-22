@@ -11,6 +11,8 @@ import (
 
 func TestMemStoreInsert(t *testing.T) {
   t.Run("saves valid statue", func(t *testing.T) {
+    t.Parallel()
+
     store := NewMemStore()
 
     params := manager.NewStatueParams().
@@ -41,6 +43,8 @@ func TestMemStoreInsert(t *testing.T) {
 
 func TestMemStoreAll(t *testing.T) {
   t.Run("returns empty slice when no rows", func(t *testing.T) {
+    t.Parallel()
+
     store := NewMemStore()
 
     result, err := store.All()
@@ -50,6 +54,8 @@ func TestMemStoreAll(t *testing.T) {
   })
 
   t.Run("returns all existing rows", func(t *testing.T) {
+    t.Parallel()
+
     store := NewMemStore()
 
     params1 := manager.NewStatueParams().
