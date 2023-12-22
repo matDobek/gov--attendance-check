@@ -21,4 +21,7 @@ create table votes (
   response varchar(255)
 );
 
+create index idx_votes_statue_id      on votes (statue_id);
+create index idx_votes_politician_id  on votes (politician_id);
+
 commit;
