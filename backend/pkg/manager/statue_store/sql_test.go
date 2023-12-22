@@ -16,7 +16,7 @@ var (
 )
 
 func TestInsert(t *testing.T) {
-  statueStore := NewSQLStore(storage.NewStorage(dbURL))
+  statueStore := NewSQLStore(storage.NewSQLDatabase(dbURL))
 
   t.Run("saves valid statue", func(t *testing.T) {
     cleanUp(t)
@@ -48,7 +48,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-  statueStore := NewSQLStore(storage.NewStorage(dbURL))
+  statueStore := NewSQLStore(storage.NewSQLDatabase(dbURL))
 
   t.Run("returns empty slice when no rows", func(t *testing.T) {
     cleanUp(t)
@@ -93,8 +93,8 @@ func cleanUp(t *testing.T) {
 
   t.Cleanup(func() {
     t.Helper()
-    s := storage.NewStorage(dbURL)
-    _, err := s.PrimaryDB.Exec("truncate table statues cascade")
+    db := storage.NewSQLDatabase(dbURL)
+    _, err := db.Exec("truncate table statues cascade")
     if err != nil {
       panic(err)
     }
