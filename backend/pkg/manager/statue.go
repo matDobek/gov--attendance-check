@@ -58,7 +58,6 @@ func (s *StatueParams) WithTitle(v string) *StatueParams {
 func (s *StatueParams) IsValid() (bool, error) {
 	var err StatueErrors
 
-
   v, b := s.VotingNumber.Unwrap()
   if !b {
 		err.VotingNumber = append(err.VotingNumber, ErrValueRequired)
@@ -69,7 +68,7 @@ func (s *StatueParams) IsValid() (bool, error) {
 
   v, b = s.SessionNumber.Unwrap()
   if !b {
-		err.SessionNumber = append(err.VotingNumber, ErrValueRequired)
+		err.SessionNumber = append(err.SessionNumber, ErrValueRequired)
   }
   if v <= 0 {
 		err.SessionNumber = append(err.SessionNumber, ErrPositiveValue)
@@ -77,10 +76,10 @@ func (s *StatueParams) IsValid() (bool, error) {
 
   v, b = s.TermNumber.Unwrap()
   if !b {
-		err.TermNumber = append(err.VotingNumber, ErrValueRequired)
+		err.TermNumber = append(err.TermNumber, ErrValueRequired)
   }
   if v <= 0 {
-		err.TermNumber = append(err.SessionNumber, ErrPositiveValue)
+		err.TermNumber = append(err.TermNumber, ErrPositiveValue)
 	}
 
   str, b := s.Title.Unwrap()
