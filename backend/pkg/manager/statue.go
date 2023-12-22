@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/matDobek/gov--attendance-check/internal/types"
 )
@@ -14,6 +15,9 @@ import (
 
 type Statue struct {
 	ID            int
+  UpdatedAt     time.Time
+  CreatedAt     time.Time
+
 	VotingNumber  int
 	SessionNumber int
 	TermNumber    int

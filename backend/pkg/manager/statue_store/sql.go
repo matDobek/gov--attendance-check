@@ -34,7 +34,15 @@ func (s *SQLStatueStore) All() ([]manager.Statue, error) {
 	var result []manager.Statue
 
 	q := `
-		select id, title, term_number, session_number, voting_number from statues
+		select
+      id,
+      title,
+      term_number,
+      session_number,
+      voting_number,
+      updated_at,
+      created_at
+    from statues
 	`
 
 	stmt, err := s.s.PrimaryDB.Prepare(q)
@@ -57,7 +65,9 @@ func (s *SQLStatueStore) All() ([]manager.Statue, error) {
 			&statue.Title,
 			&statue.TermNumber,
 			&statue.SessionNumber,
-			&statue.VotingNumber)
+			&statue.VotingNumber,
+      &statue.UpdatedAt,
+      &statue.CreatedAt)
 
 		if err != nil {
 			return nil, err
@@ -76,9 +86,21 @@ func (s *SQLStatueStore) All() ([]manager.Statue, error) {
 func (s *SQLStatueStore) Insert(params manager.StatueParams) (manager.Statue, error) {
   statue := manager.Statue{}
 	q := `
-    insert into statues (title, term_number, session_number, voting_number)
+    insert into statues (
+        title,
+        term_number,
+        session_number,
+        voting_number
+      )
       values ($1, $2, $3, $4)
-      returning id, title, term_number, session_number, voting_number
+      returning
+        id,
+        title,
+        term_number,
+        session_number,
+        voting_number,
+        updated_at,
+        created_at
   `
 
 	stmt, err := s.s.PrimaryDB.Prepare(q)
@@ -96,7 +118,9 @@ func (s *SQLStatueStore) Insert(params manager.StatueParams) (manager.Statue, er
 			&statue.Title,
 			&statue.TermNumber,
 			&statue.SessionNumber,
-			&statue.VotingNumber)
+			&statue.VotingNumber,
+      &statue.UpdatedAt,
+      &statue.CreatedAt)
 	if err != nil {
 		return manager.Statue{}, err
 	}
