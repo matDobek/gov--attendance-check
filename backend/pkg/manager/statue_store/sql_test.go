@@ -16,7 +16,7 @@ var (
 )
 
 func TestInsert(t *testing.T) {
-  statueStore := NewSQLStatueStore(storage.NewStorage(dbURL))
+  statueStore := NewSQLStore(storage.NewStorage(dbURL))
 
   t.Run("saves valid statue", func(t *testing.T) {
     cleanUp(t)
@@ -48,7 +48,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-  statueStore := NewSQLStatueStore(storage.NewStorage(dbURL))
+  statueStore := NewSQLStore(storage.NewStorage(dbURL))
 
   t.Run("returns empty slice when no rows", func(t *testing.T) {
     cleanUp(t)

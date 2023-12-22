@@ -9,28 +9,28 @@ import (
 // New
 //----------------------------------
 
-func NewSQLStatueStore(s *storage.Storage) *SQLStatueStore {
-	return &SQLStatueStore{s: s}
+func NewSQLStore(s *storage.Storage) *SQLStore {
+	return &SQLStore{s: s}
 }
 
 //----------------------------------
 // StatueStore
 //----------------------------------
 
-type SQLStatueStore struct {
+type SQLStore struct {
 	s *storage.Storage
 }
 
 var (
-	_ manager.CreateStatueStore = (*SQLStatueStore)(nil)
-	_ manager.AllStatuesStore   = (*SQLStatueStore)(nil)
+	_ manager.CreateStatueStore = (*SQLStore)(nil)
+	_ manager.AllStatuesStore   = (*SQLStore)(nil)
 )
 
 //
 //
 //
 
-func (s *SQLStatueStore) All() ([]manager.Statue, error) {
+func (s *SQLStore) All() ([]manager.Statue, error) {
 	var result []manager.Statue
 
 	q := `
@@ -83,7 +83,7 @@ func (s *SQLStatueStore) All() ([]manager.Statue, error) {
 //
 //
 
-func (s *SQLStatueStore) Insert(params manager.StatueParams) (manager.Statue, error) {
+func (s *SQLStore) Insert(params manager.StatueParams) (manager.Statue, error) {
   statue := manager.Statue{}
 	q := `
     insert into statues (
