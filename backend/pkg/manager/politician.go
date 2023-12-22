@@ -12,6 +12,11 @@ import (
 // Types
 //=======================================================
 
+type PoliticianStore interface {
+	Insert(PoliticianParams) (Politician, error)
+	All() ([]Politician, error)
+}
+
 type Politician struct {
 	ID            int
   UpdatedAt     time.Time
@@ -113,11 +118,7 @@ func (e PoliticianErrors) Is(target error) bool {
 //
 //
 
-type CreatePoliticianStore interface {
-	Insert(PoliticianParams) (Politician, error)
-}
-
-func CreatePolitician(store CreatePoliticianStore, params PoliticianParams) (Politician, error) {
+func CreatePolitician(store PoliticianStore, params PoliticianParams) (Politician, error) {
   ok, err := params.IsValid()
   if !ok {
     return Politician{}, err
@@ -130,10 +131,6 @@ func CreatePolitician(store CreatePoliticianStore, params PoliticianParams) (Pol
 //
 //
 
-type AllPoliticiansStore interface {
-	All() ([]Politician, error)
-}
-
-func AllPoliticians(store AllPoliticiansStore) ([]Politician, error) {
+func AllPoliticians(store PoliticianStore) ([]Politician, error) {
 	return store.All()
 }

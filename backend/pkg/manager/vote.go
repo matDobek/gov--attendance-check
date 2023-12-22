@@ -19,6 +19,12 @@ const (
 	VoteResponseMaybe  = "Wstrzymał się"
 )
 
+type VoteStore interface {
+	Insert(VoteParams) (Vote, error)
+	All() ([]Vote, error)
+}
+
+
 type Vote struct {
 	ID            int
   UpdatedAt     time.Time
@@ -147,11 +153,7 @@ func (e VoteErrors) Is(target error) bool {
 //
 //
 
-type CreateVoteStore interface {
-	Insert(VoteParams) (Vote, error)
-}
-
-func CreateVote(store CreateVoteStore, params VoteParams) (Vote, error) {
+func CreateVote(store VoteStore, params VoteParams) (Vote, error) {
   ok, err := params.IsValid()
   if !ok {
     return Vote{}, err
@@ -164,10 +166,6 @@ func CreateVote(store CreateVoteStore, params VoteParams) (Vote, error) {
 //
 //
 
-type AllVotesStore interface {
-	All() ([]Vote, error)
-}
-
-func AllVotes(store AllVotesStore) ([]Vote, error) {
+func AllVotes(store VoteStore) ([]Vote, error) {
 	return store.All()
 }
