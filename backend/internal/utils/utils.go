@@ -61,6 +61,32 @@ func lookup(dirs []string, name string) ([]string, error) {
 //
 //
 
+func PrimaryDatabaseURL() string {
+  path, err := LookupMod()
+  if err != nil {
+    panic(err)
+  }
+
+  path = append(path, ".env")
+  spath := strings.Join(path, "/")
+
+  err = godotenv.Load(spath)
+  if err != nil {
+    panic(err)
+  }
+
+  url := os.Getenv("DB__MAIN__URL")
+  if strings.Trim(url, " \t\n") == "" {
+    panic("primary database url is not set")
+  }
+
+  return url
+}
+
+//
+//
+//
+
 func TestPrimaryDatabaseURL() string {
   path, err := LookupMod()
   if err != nil {
