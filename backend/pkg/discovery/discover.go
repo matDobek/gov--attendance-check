@@ -73,7 +73,7 @@ func initRequest() func(string) (string, error) {
 	}
 }
 
-func Run() ([]Statue, error) {
+func Discover() ([]Statue, error) {
 	result := []Statue{}
 
 	statuesToParse, err := getStatuesToParse()
