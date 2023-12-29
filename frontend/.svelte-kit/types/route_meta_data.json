@@ -1,6 +1,12 @@
 {
 	"/": [],
 	"/about": [],
+	"/politicians": [
+		"src/routes/politicians/+page.ts"
+	],
+	"/statues": [
+		"src/routes/statues/+page.ts"
+	],
 	"/votes": [
 		"src/routes/votes/+page.ts"
 	]
