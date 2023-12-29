@@ -13,7 +13,7 @@ create table statues (
   voting_number  integer not null,
   session_number integer not null,
   term_number    integer not null,
-  title          varchar(255) not null,
+  title          text not null,
   updated_at     timestamp default current_timestamp,
   created_at     timestamp default current_timestamp
 );
