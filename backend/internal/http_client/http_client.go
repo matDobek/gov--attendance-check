@@ -124,6 +124,7 @@ func (c *HttpClient) Get(url string) (respBody []byte, err error) {
 	// naive prevention for rejecting bot requests
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0")
 
+	time.Sleep(2 * time.Second)
 	logger.Info("GET: %s", url)
 
 	resp, err := c.client.Do(req)
